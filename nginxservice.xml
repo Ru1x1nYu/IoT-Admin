@@ -1,0 +1,10 @@
+<service>
+    <id>nginx16</id>
+    <name>nginx</name>
+    <description>nginx16</description>
+    <logpath>D:\nginx-1.16.1\nginx-1.16.1\logs</logpath>
+    <logmode>roll</logmode>
+    <depend></depend>
+    <executable>D:\nginx-1.16.1\nginx-1.16.1\nginx.exe</executable>
+    <stopexecutable>D:\nginx-1.16.1\nginx-1.16.1\nginx.exe -s stop</stopexecutable>
+</service>
