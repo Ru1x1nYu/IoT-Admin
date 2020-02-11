@@ -28,7 +28,10 @@ export default new Router({
     {
       path: '/login',
       component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue'),
-      meta: { hidden: true }
+      meta: {
+        hidden: true,
+        title: '登录页面'
+      }
     },
     {
       path: '/404',

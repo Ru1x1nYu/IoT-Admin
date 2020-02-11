@@ -24,88 +24,79 @@
         align="center"
         prop="address"
         label="设备号"
-        width="150"
       />
       <el-table-column
         align="center"
         prop="room"
         label="房间号"
-        width="150"
       />
       <el-table-column
         align="center"
         prop="name"
         label="房间名"
-        width="150"
       />
       <el-table-column
         align="center"
         prop="r_mode_r"
         label="运行模式反馈"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_mode_r ===1 ? '运行':row.r_mode_r ===2 ? '节能' : row.r_mode_r ===3 ? '本地待机' : row.r_mode_r ===4 ? '锁定' : '未知' }}
+          {{ row.r_mode_r ===1 ? '运行':row.r_mode_r ===2 ? '节能' : row.r_mode_r ===3 ? '本地待机' : row.r_mode_r ===4 ? '锁定' : '离线' }}
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_mode_s"
         label="运行模式设定"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_mode_s ===1 ? '运行': row.r_mode_s ===3 ? '节能' : '未知' }}
+          {{ row.r_mode_s ===1 ? '运行': row.r_mode_s ===3 ? '节能' : '' }}
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_fan_r"
         label="风机速度反馈"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_fan_r === 1? '自动' : row.r_fan_r === 2 ? '低速' : row.r_fan_r === 3 ? '中速' : row.r_fan_r === 4 ? '高速' : '未知' }}
+          {{ row.r_fan_r === 1? '自动' : row.r_fan_r === 2 ? '低速' : row.r_fan_r === 3 ? '中速' : row.r_fan_r === 4 ? '高速' : '离线' }}
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_fan_s"
         label="风机速度设定"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_fan_s === 1? '自动' : row.r_fan_s === 2 ? '低速' : row.r_fan_s === 3 ? '中速' : row.r_fan_s === 4 ? '高速' : '未知' }}
+          {{ row.r_fan_s === 1? '自动' : row.r_fan_s === 2 ? '低速' : row.r_fan_s === 3 ? '中速' : row.r_fan_s === 4 ? '高速' : '' }}
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_temp_r"
         label="环境温度反馈"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_door }}°C
+          {{ row.r_temp_r.toFixed(1) }}°C
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_temp_s"
         label="环境温度设定"
-        width="150"
       >
         <template slot-scope="{row}">
           <el-input
             type="text"
-            :value="row.r_temp_s"
+            :value="row.r_temp_s.toFixed(1)"
           />
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="r_hc"
+        :filters="[{text: '制冷', value: '1'}, {text: '制热', value: '2'}, {text: '未知', value: '0'}]"
         label="制冷、制热模式"
-        width="150"
       >
         <template slot-scope="{row}">
           {{ row.r_hc === 1? '制冷' : row.r_hc === 2 ? '制热' : '未知' }}
@@ -115,16 +106,15 @@
         align="center"
         prop="r_door"
         label="门磁功能"
-        width="150"
       >
         <template slot-scope="{row}">
-          {{ row.r_door === 2 ? '失效' : row.r_door === 3 ? '有效' : '未知' }}
+          {{ row.r_door === 2 ? '失效' : row.r_door === 3 ? '' : '' }}
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
       :current-page.sync="page"
-      :page-sizes="[15, 20, 30, 40, 50, 60, 120]"
+      :page-sizes="[30, 40, 50, 60, 120]"
       :page-size="pageSize"
       layout="sizes, prev, pager, next"
       :page-count="pageCount"
@@ -147,7 +137,7 @@ export default class extends Vue {
   private areaList: Number[] =[]
   private deviceList: object[] =[]
   private page: number =1
-  private pageSize: number =15
+  private pageSize: number =30
   private pageCount?: number
   private currentFloor: string ='1'
   private listLoading = true
@@ -157,7 +147,7 @@ export default class extends Vue {
     if (newVal !== oldVal) {
       console.log('变了')
       this.page = 1
-      this.pageSize = 15
+      this.pageSize = 30
     }
   }
 
@@ -174,7 +164,7 @@ export default class extends Vue {
   }
   private handleTable(item:string) {
     this.page = 1
-    this.pageSize = 15
+    this.pageSize = 30
     this.currentFloor = item
     this.getDeviceList()
   }
@@ -203,7 +193,7 @@ export default class extends Vue {
     this.getDeviceList()
   }
   private tableRowClassName({ row, rowIndex }:any) {
-    if (row.r_mode_r !== 0 || row.r_mode_s !== 0 || row.r_fan_r !== 0 || row.r_fan_s !== 0) {
+    if (row.r_mode_r !== 0 || row.r_fan_r !== 0 || row.r_temp_r !== 0) {
       return ''
     } else {
       return 'isUnknow'
@@ -213,6 +203,10 @@ export default class extends Vue {
 </script>
 <style lang="scss">
 .app-container{
+  .el-input__inner{
+    height: 30px;
+    line-height: 30px;
+  }
   h2{
     small{
       font-size: 60%;

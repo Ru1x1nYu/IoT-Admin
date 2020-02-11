@@ -10,7 +10,7 @@
     >
       <div class="title-container">
         <h3 class="title">
-          Login Form
+          建筑设备能效管理系统
         </h3>
       </div>
 
@@ -58,13 +58,6 @@
       >
         Sign in
       </el-button>
-
-      <div style="position:relative">
-        <div class="tips">
-          <span> username: admin </span>
-          <span> password: any </span>
-        </div>
-      </div>
     </el-form>
   </div>
 </template>
@@ -73,8 +66,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
-import { Form as ElForm, Input } from 'element-ui'
-import { UserModule } from '@/store/modules/user'
+import { Form as ElForm, Input, Message } from 'element-ui'
+// import { UserModule } from '@/store/modules/user'
 import { isValidUsername } from '@/utils/validate'
 
 @Component({
@@ -89,15 +82,15 @@ export default class extends Vue {
     }
   }
   private validatePassword = (rule: any, value: string, callback: Function) => {
-    if (value.length < 6) {
+    if (value.length === 0) {
       callback(new Error('The password can not be less than 6 digits'))
     } else {
       callback()
     }
   }
   private loginForm = {
-    username: 'admin',
-    password: '111111'
+    username: 'ghl',
+    password: 'ghl'
   }
   private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -140,14 +133,26 @@ export default class extends Vue {
   }
 
   private handleLogin() {
-    (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
+    (this.$refs.loginForm as ElForm).validate((valid: boolean) => {
       if (valid) {
         this.loading = true
-        await UserModule.Login(this.loginForm)
-        this.$router.push({
-          path: this.redirect || '/',
-          query: this.otherQuery
-        })
+        // await UserModule.Login(this.loginForm)
+        if (this.loginForm.password === 'ghl' && this.loginForm.username === 'ghl') {
+          localStorage.setItem('token', 'ghl')
+          this.$router.push({
+            path: '/'
+          })
+        } else {
+          this.$router.push({
+            path: '/login'
+          })
+          Message({
+            message: '帐号或者密码错误',
+            type: 'error',
+            duration: 5 * 1000
+          })
+        }
+
         // Just to simulate the time of the request
         setTimeout(() => {
           this.loading = false
